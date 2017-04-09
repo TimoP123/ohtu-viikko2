@@ -14,19 +14,19 @@ public class Main {
         }
 
         String url = "http://ohtustats2017.herokuapp.com/students/" + studentNr + "/submissions";
-
         String bodyText = Request.Get(url).execute().returnContent().asString();
-
-        System.out.println("json-muotoinen data:");
-        System.out.println(bodyText);
+        String courseUrl = "https://ohtustats2017.herokuapp.com/courses/1.json";
+        String courseBodyText = Request.Get(courseUrl).execute().returnContent().asString();
 
         Gson mapper = new Gson();
         Submission[] subs = mapper.fromJson(bodyText, Submission[].class);
+        Course course = mapper.fromJson(courseBodyText, Course.class);
 
         int sumExercises = 0;
         int sumTime = 0;
         
-        System.out.println("opiskelijanumero: " + subs[0].getStudent_number());
+        System.out.println("Kurssi: " + course + "\n");
+        System.out.println("opiskelijanumero: " + subs[0].getStudent_number() + "\n");
 
         for (Submission submission : subs) {
             sumExercises += submission.getDone();
