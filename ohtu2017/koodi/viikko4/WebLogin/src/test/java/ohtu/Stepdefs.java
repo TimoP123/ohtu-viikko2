@@ -19,7 +19,14 @@ public class Stepdefs {
         driver.get(baseUrl);
         WebElement element = driver.findElement(By.linkText("login"));       
         element.click();          
-    } 
+    }
+    
+    @Given("^new user is selected$")
+    public void new_user_is_selected() throws Throwable {
+        driver.get(baseUrl);
+        WebElement element = driver.findElement(By.linkText("register new user"));
+        element.click();
+    }
 
     @When("^username \"([^\"]*)\" and password \"([^\"]*)\" are given$")
     public void username_and_password_are_given(String username, String password) throws Throwable {
@@ -29,6 +36,11 @@ public class Stepdefs {
         element.sendKeys(password);
         element = driver.findElement(By.name("login"));
         element.submit();  
+    }
+    
+    @When("^new username \"([^\"]*)\" and new password \"([^\"]*)\" are given$")
+    public void correct_username_and_correct_password_are_given(String username, String password) throws Throwable {
+        createAccountWith(username, password, password);
     }
 
     @Then("^system will respond \"([^\"]*)\"$")
@@ -46,9 +58,19 @@ public class Stepdefs {
         logInWith(username, password);
     }
     
+    @When("^valid username \"([^\"]*)\" and too short password \"([^\"]*)\" are given$")
+    public void valid_username_and_too_short_password_are_given(String username, String password) throws Throwable {
+        createAccountWith(username, password, password);
+    }
+    
     @When("^nonexisting username \"([^\"]*)\" and password \"([^\"]*)\" are given$")
     public void nonexisting_username_and_password_are_given(String username, String password) {
         logInWith(username, password);
+    }
+    
+    @When("^too short username \"([^\"]*)\" and valid password \"([^\"]*)\" are given$")
+    public void too_short_username_and_valid_password_are_given(String username, String password) throws Throwable {
+        createAccountWith(username, password, password);
     }
     
     @Then("^user is logged in$")
@@ -60,7 +82,18 @@ public class Stepdefs {
     public void user_is_not_logged_in_and_error_message_is_given() throws Throwable {
         pageHasContent("invalid username or password");
         pageHasContent("Give your credentials to login");
-    }     
+    }
+    
+    @Then("^new user is created and welcome page is shown$")
+    public void new_user_is_created_and_welocme_page_is_shown() throws Throwable {
+        pageHasContent("Welcome to Ohtu Application!");
+    }
+    
+    @Then("^user is not created and error \"([^\"]*)\" is reported$")
+    public void user_is_not_created_and_error_is_reported(String error) throws Throwable {
+        pageHasContent(error);
+        pageHasContent("Create username and give password");
+    }
     
     @After
     public void tearDown(){
@@ -82,4 +115,16 @@ public class Stepdefs {
         element = driver.findElement(By.name("login"));
         element.submit();  
     } 
+    
+    private void createAccountWith(String username, String password, String again) {
+        assertTrue(driver.getPageSource().contains("Create username and give password"));
+        WebElement element = driver.findElement(By.name("username"));
+        element.sendKeys(username);
+        element = driver.findElement(By.name("password"));
+        element.sendKeys(password);
+        element = driver.findElement(By.name("passwordConfirmation"));
+        element.sendKeys(again);
+        element = driver.findElement(By.name("signup"));
+        element.submit();
+    }
 }
