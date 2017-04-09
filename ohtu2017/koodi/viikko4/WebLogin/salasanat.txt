@@ -1,2 +1,6 @@
 pekka;akkep
 jukka;akkuj
+timo;kook
+Heikki;Huihai
+hai;siee
+Heikkii;Huihai
